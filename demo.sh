@@ -1,6 +1,4 @@
 #!/bin/sh
-
-gomake
 ./goto -http=:8081 -rpc=true &
 master_pid=$!
 sleep 1
