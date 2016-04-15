@@ -28,13 +28,13 @@ func main() {
 		rpc.RegisterName("Store", store)
 		rpc.HandleHTTP()
 	}
-	http.HandleFunc("/", Redirect)
-	http.HandleFunc("/add", Add)
+	http.HandleFunc("/", redirect)
+	http.HandleFunc("/add", add)
 	http.ListenAndServe(*listenAddr, nil)
 
 }
 
-func Redirect(w http.ResponseWriter, r *http.Request) {
+func redirect(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Path[1:]
 	if key == ""  {
 		http.NotFound(w, r)
@@ -48,11 +48,12 @@ func Redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
-func Add(w http.ResponseWriter, r *http.Request) {
+func add(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if url == "" {
 		w.Header().Set("Content-Type", "text/html")
-		fmt.Fprint(w, AddForm)
+		w.Write([]byte(addForm))
+
 		return
 	}
 	var key string
@@ -63,7 +64,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "http://%s/%s", *hostname, key)
 }
 
-const AddForm = `
+const addForm = `
 <form method="POST" action="/add">
 URL: <input type="text" name="url">
 <input type="submit" value="Add">
